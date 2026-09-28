@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math Mushroom Quest — Year 5 Malaysia</title>
+<style>
+  :root{
+    --sky:#76c7ff; --blue:#1769aa; --deep:#0a3766; --green:#58b947;
+    --grass:#2f8f2f; --yellow:#ffd447; --red:#e84b3c; --cream:#fff7df;
+    --ink:#16324a; --white:#fff; --brown:#9a5a2a; --shadow:0 12px 26px rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(#74c8ff 0 48%,#d7f4ff 48% 62%,#7ccf5d 62%);color:var(--ink);min-height:100vh}
+  .wrap{max-width:1050px;margin:auto;padding:18px}
+  .hero{
+    background:rgba(255,255,255,.9); border:5px solid #fff; border-radius:28px; box-shadow:var(--shadow);
+    padding:28px; text-align:center; position:relative; overflow:hidden;
+  }
+  .hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:#fff;opacity:.85}
+  .hero:before{width:140px;height:45px;left:40px;top:28px}
+  .hero:after{width:180px;height:55px;right:25px;top:65px}
+  h1{font-size:clamp(34px,6vw,72px);margin:8px 0 2px;color:var(--red);text-shadow:3px 3px 0 #fff,6px 6px 0 var(--yellow);position:relative;z-index:2}
+  .subtitle{font-weight:800;font-size:18px;position:relative;z-index:2}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0;position:relative;z-index:2}
+  .badge{background:var(--yellow);padding:8px 12px;border-radius:999px;font-weight:800;border:2px solid #8d6e00}
+  .menu{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  button{border:0;border-radius:16px;padding:15px 16px;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:.15s transform}
+  button:hover{transform:translateY(-2px)}
+  .play{background:var(--green);color:#fff}.how{background:var(--yellow)}.credit{background:#fff}.lead{background:var(--blue);color:#fff}
+  .panel{display:none;background:rgba(255,255,255,.96);border-radius:24px;padding:22px;margin-top:16px;box-shadow:var(--shadow)}
+  .panel.active{display:block}
+  .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  .hud div{background:#eef8ff;border:2px solid #b8dcf7;border-radius:14px;padding:10px;text-align:center;font-weight:800}
+  .road{height:75px;background:#98dd7b;border-radius:18px;position:relative;overflow:hidden;margin:12px 0 20px;border:3px solid #4ea33d}
+  .road:before{content:"";position:absolute;bottom:0;left:0;right:0;height:24px;background:repeating-linear-gradient(90deg,#a96a35 0 38px,#8a532c 38px 76px)}
+  .player{position:absolute;bottom:19px;font-size:39px;left:3%;transition:left .45s ease}
+  .flag{position:absolute;right:2%;bottom:20px;font-size:42px}
+  .qbox{background:var(--cream);border:3px solid #e7bf59;border-radius:20px;padding:20px}
+  .qtag{display:inline-block;background:var(--deep);color:#fff;border-radius:999px;padding:6px 10px;font-size:13px;font-weight:800;margin-bottom:8px}
+  .question{font-size:clamp(22px,3vw,32px);font-weight:900;margin:8px 0 18px}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ans{background:#fff;border:3px solid #cfe1eb;color:var(--ink);box-shadow:none}
+  .ans:hover{border-color:var(--blue)}
+  .feedback{min-height:34px;font-weight:900;margin-top:12px}
+  .good{color:#18833c}.bad{color:#b22525}
+  .nameRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  input{flex:1;min-width:220px;padding:13px 14px;border-radius:12px;border:2px solid #b9ccda;font-size:16px}
+  .smallbtn{background:var(--red);color:white;padding:12px 15px}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{padding:11px;border-bottom:1px solid #dce8ef;text-align:left}
+  th{background:#eaf6ff}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .topic{background:#f7fbff;border-left:6px solid var(--blue);padding:12px;border-radius:10px}
+  .footer{text-align:center;font-size:13px;margin:16px;color:#35546c;background:rgba(255,255,255,.72);padding:10px;border-radius:12px}
+  @media(max-width:760px){.menu{grid-template-columns:1fr 1fr}.hud{grid-template-columns:1fr 1fr}.answers,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Math Mushroom Quest</h1>
+    <div class="subtitle">Year 5 Mathematics • Malaysian KSSR • Mario-style platform adventure</div>
+    <div class="badges">
+      <span class="badge">⭐ 10 Levels</span>
+      <span class="badge">🪙 Coins & Score</span>
+      <span class="badge">❤️ 3 Lives</span>
+      <span class="badge">🏆 Local Leaderboard</span>
+    </div>
+  </section>
+
+  <nav class="menu">
+    <button class="play" onclick="showPanel('game')">▶ PLAY</button>
+    <button class="how" onclick="showPanel('how')">📘 HOW TO PLAY</button>
+    <button class="credit" onclick="showPanel('credits')">👩‍🏫 CREDITS</button>
+    <button class="lead" onclick="showPanel('leaderboard')">🏆 LEADERBOARD</button>
+  </nav>
+
+  <section id="game" class="panel active">
+    <div class="nameRow">
+      <input id="playerName" maxlength="18" placeholder="Enter player name" />
+      <button class="smallbtn" onclick="startGame()">Start New Quest</button>
+    </div>
+
+    <div class="hud">
+      <div>LEVEL<br><span id="level">1/10</span></div>
+      <div>SCORE<br><span id="score">0</span></div>
+      <div>COINS<br><span id="coins">0</span> 🪙</div>
+      <div>LIVES<br><span id="lives">❤️❤️❤️</span></div>
+    </div>
+
+    <div class="road">
+      <div class="player" id="player">🏃</div>
+      <div class="flag">🏁</div>
+    </div>
+
+    <div class="qbox">
+      <span class="qtag" id="topicTag">Ready?</span>
+      <div class="question" id="question">Enter your name and press “Start New Quest”.</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </section>
+
+  <section id="how" class="panel">
+    <h2>📘 How to Play</h2>
+    <div class="grid2">
+      <div class="topic"><b>1. Start</b><br>Enter your name, then press <b>Start New Quest</b>.</div>
+      <div class="topic"><b>2. Answer</b><br>Choose the correct answer from four choices.</div>
+      <div class="topic"><b>3. Earn</b><br>Correct answer = <b>100 points + 1 coin</b>.</div>
+      <div class="topic"><b>4. Lives</b><br>Wrong answer costs 1 life. The quest ends when lives reach zero.</div>
+      <div class="topic"><b>5. Progress</b><br>Your runner moves toward the finish flag after each correct answer.</div>
+      <div class="topic"><b>6. Win</b><br>Complete 10 levels. Your score is saved to the leaderboard on this browser.</div>
+    </div>
+    <h3>Curriculum Coverage</h3>
+    <p>Questions are drawn from Year 5 KSSR Mathematics strands: whole numbers and operations, fractions/decimals/percentages, money, time, measurement, space, coordinates/ratio, and data handling.</p>
+  </section>
+
+  <section id="credits" class="panel">
+    <h2>👩‍🏫 Credits</h2>
+    <p><b>Game concept:</b> Game-based learning activity for Year 5 Mathematics.</p>
+    <p><b>Curriculum basis:</b> Malaysian KSSR Mathematics Year 5 learning topics.</p>
+    <p><b>Visual approach:</b> Original platform-game inspired interface using emoji and CSS shapes. No Nintendo/Mario character artwork, music, sprites, logos, or other copyrighted game assets are included.</p>
+    <p><b>Suggested classroom use:</b> Individual revision, station activity, enrichment, or quick formative assessment.</p>
+  </section>
+
+  <section id="leaderboard" class="panel">
+    <h2>🏆 Leaderboard</h2>
+    <p>Top scores saved on this device/browser.</p>
+    <table>
+      <thead><tr><th>#</th><th>Player</th><th>Score</th><th>Coins</th></tr></thead>
+      <tbody id="boardBody"></tbody>
+    </table>
+    <button class="smallbtn" style="margin-top:12px" onclick="clearBoard()">Clear Leaderboard</button>
+  </section>
+
+  <div class="footer">Teacher note: Scores are stored only in the browser using localStorage. Refreshing the page will not erase the leaderboard.</div>
+</div>
+
+<script>
+const bank = [
+ {t:"Whole Numbers & Operations", q:"What is 456,320 + 123,480?", a:["579,800","569,800","580,700","579,700"], c:0},
+ {t:"Whole Numbers & Operations", q:"720,000 ÷ 100 = ?", a:["720","7,200","72,000","72"], c:1},
+ {t:"Fractions", q:"What is 3/4 of 200?", a:["50","100","150","175"], c:2},
+ {t:"Decimals", q:"4.75 + 2.6 = ?", a:["7.25","7.35","6.35","7.15"], c:1},
+ {t:"Percentages", q:"25% of 240 = ?", a:["40","50","60","80"], c:2},
+ {t:"Money", q:"A book costs RM18.50. You pay RM50. What is the change?", a:["RM31.50","RM32.50","RM30.50","RM28.50"], c:0},
+ {t:"Time", q:"A movie starts at 2:35 p.m. and lasts 1 hour 45 minutes. When does it end?", a:["4:10 p.m.","4:20 p.m.","4:30 p.m.","3:80 p.m."], c:1},
+ {t:"Measurement", q:"2.5 kg = how many grams?", a:["250 g","2,050 g","2,500 g","25,000 g"], c:2},
+ {t:"Space", q:"A rectangle is 12 cm long and 7 cm wide. What is its area?", a:["19 cm²","38 cm²","84 cm²","96 cm²"], c:2},
+ {t:"Coordinates & Ratio", q:"The ratio of red to blue marbles is 2:3. If there are 12 red marbles, how many blue marbles are there?", a:["8","16","18","24"], c:2},
+ {t:"Data Handling", q:"The scores are 8, 10, 7, 10, 5. What is the mode?", a:["5","7","8","10"], c:3},
+ {t:"Rounding", q:"Round 348,760 to the nearest ten thousand.", a:["340,000","350,000","348,000","300,000"], c:1},
+ {t:"Mixed Operations", q:"600 + 8 × 25 = ?", a:["15,200","800","20,000","15,000"], c:1},
+ {t:"Percentages", q:"A class has 40 pupils. 60% are present. How many pupils are present?", a:["18","20","24","30"], c:2},
+ {t:"Measurement", q:"3 L 250 mL = ?", a:["3,025 mL","3,250 mL","325 mL","32,500 mL"], c:1}
+];
+
+let questions=[], idx=0, score=0, coins=0, lives=3, playerName="", locked=false;
+
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==="leaderboard") renderBoard();
+}
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+function startGame(){
+  playerName = document.getElementById('playerName').value.trim() || "Player";
+  questions = shuffle(bank).slice(0,10);
+  idx=0; score=0; coins=0; lives=3; locked=false;
+  updateHud(); renderQ();
+}
+
+function updateHud(){
+  document.getElementById('level').textContent = Math.min(idx+1,10)+"/10";
+  document.getElementById('score').textContent = score;
+  document.getElementById('coins').textContent = coins;
+  document.getElementById('lives').textContent = "❤️".repeat(Math.max(0,lives)) || "—";
+  document.getElementById('player').style.left = Math.min(3 + idx*9, 87) + "%";
+}
+
+function renderQ(){
+  locked=false;
+  if(lives<=0){ endGame(false); return; }
+  if(idx>=questions.length){ endGame(true); return; }
+  const x=questions[idx];
+  document.getElementById('topicTag').textContent=x.t;
+  document.getElementById('question').textContent=x.q;
+  document.getElementById('feedback').textContent="";
+  const area=document.getElementById('answers'); area.innerHTML="";
+  x.a.forEach((txt,i)=>{
+    const b=document.createElement('button'); b.className='ans'; b.textContent=txt;
+    b.onclick=()=>answer(i); area.appendChild(b);
+  });
+  updateHud();
+}
+
+function answer(choice){
+  if(locked) return;
+  locked=true;
+  const x=questions[idx];
+  const fb=document.getElementById('feedback');
+  if(choice===x.c){
+    score+=100; coins+=1; idx++;
+    fb.className='feedback good'; fb.textContent="✅ Correct! +100 points and +1 coin.";
+    updateHud();
+    setTimeout(renderQ,700);
+  }else{
+    lives--;
+    fb.className='feedback bad'; fb.textContent="❌ Try again! One life lost.";
+    updateHud();
+    if(lives<=0) setTimeout(()=>endGame(false),700);
+    else setTimeout(()=>{locked=false;fb.textContent="Choose another answer.";},650);
+  }
+}
+
+function endGame(won){
+  document.getElementById('topicTag').textContent = won ? "QUEST COMPLETE!" : "GAME OVER";
+  document.getElementById('question').textContent = won
+    ? `Well done, ${playerName}! You completed all 10 levels with ${score} points.`
+    : `${playerName}, your quest ended with ${score} points. Start a new quest and try again!`;
+  document.getElementById('answers').innerHTML = '<button class="play" onclick="startGame()">🔁 Play Again</button><button class="lead" onclick="showPanel(\'leaderboard\')">🏆 View Leaderboard</button>';
+  saveScore();
+}
+
+function saveScore(){
+  let board=JSON.parse(localStorage.getItem('mathQuestBoard')||'[]');
+  board.push({name:playerName,score,coins});
+  board.sort((a,b)=>b.score-a.score || b.coins-a.coins);
+  board=board.slice(0,10);
+  localStorage.setItem('mathQuestBoard',JSON.stringify(board));
+}
+
+function renderBoard(){
+  const board=JSON.parse(localStorage.getItem('mathQuestBoard')||'[]');
+  const body=document.getElementById('boardBody'); body.innerHTML="";
+  if(!board.length){ body.innerHTML='<tr><td colspan="4">No scores yet. Be the first champion!</td></tr>'; return; }
+  board.forEach((r,i)=>{
+    body.innerHTML += `<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.score}</td><td>${r.coins} 🪙</td></tr>`;
+  });
+}
+function clearBoard(){
+  localStorage.removeItem('mathQuestBoard'); renderBoard();
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+renderBoard();
+</script>
+</body>
+</html>
